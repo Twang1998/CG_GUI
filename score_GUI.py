@@ -54,8 +54,8 @@ class App:
         mark = Scale(frame,from_=0,  to=5,  resolution=0.1, orient=VERTICAL , variable=var ,length = int(h_win*0.4),showvalue=0,tickinterval=0.5)
         mark.place(x=0.95*w_win, y=0.5*h_win, anchor='center')
         mark.bind("<MouseWheel>", self.wheel)
-        window.bind("<Button-4>",self.wheel_down)
-        window.bind("<Button-5>",self.wheel_up)
+        mark.bind("<Button-4>",self.wheel_down)
+        mark.bind("<Button-5>",self.wheel_up)
         var.set(2.5)
 
         next_button = Button(frame,text='Next',command=self.next)
