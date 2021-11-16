@@ -1,5 +1,5 @@
 
-from posix import sched_param
+# from posix import sched_param
 from tkinter import *
 from PIL import Image, ImageTk
 import os
@@ -9,6 +9,8 @@ import json
 import tkinter.messagebox 
 import requests
 from io import BytesIO
+
+from generate_csv import Pic_List
  
 class App:
     def __init__(self,window,w_win,h_win):
@@ -33,7 +35,7 @@ class App:
         canvas.place(x = 0, y = 0.5*h_win,anchor='w')
 
         img = Image.open(Pic_List[Index]).convert('RGB')
-        # img = Image.open(BytesIO(requests.get('https://www.runoob.com/wp-content/uploads/2020/04/6C773061-44DA-4B94-8524-934664AA2425.jpg').content)).convert('RGB')
+        # img = Image.open(BytesIO(requests.get('http://0.0.0.0:80/pic/Venice_3840x2160_60fps_10bit_420_1920x1080_BC.png').content)).convert('RGB')
         # img.show()
         img_tk = ImageTk.PhotoImage(img)
         self.pre_imag = canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
@@ -51,6 +53,9 @@ class App:
 
         mark = Scale(frame,from_=0,  to=5,  resolution=0.1, orient=VERTICAL , variable=var ,length = int(h_win*0.4),showvalue=0,tickinterval=0.5)
         mark.place(x=0.95*w_win, y=0.5*h_win, anchor='center')
+        mark.bind("<MouseWheel>", self.wheel)
+        window.bind("<Button-4>",self.wheel_down)
+        window.bind("<Button-5>",self.wheel_up)
         var.set(2.5)
 
         next_button = Button(frame,text='Next',command=self.next)
@@ -61,6 +66,20 @@ class App:
 
         save_button = Button(frame,text='Save',command=self.save)
         save_button.place(x=0.95*w_win, y=0.9*h_win, anchor='center')
+    def wheel(self,event):
+        # print('haha')
+        # print(event.delta)
+        if event.delta > 0:
+            self.var.set(self.var.get()+0.1)
+        else:
+            self.var.set(self.var.get()-0.1)
+    def wheel_up(self,event):
+        # print('haha')
+        self.var.set(self.var.get()+0.1)
+
+    def wheel_down(self,event):
+
+        self.var.set(self.var.get()-0.1)
 
     def next(self):
         global Pic_List
@@ -70,7 +89,7 @@ class App:
         global img_tk
 
         if Index == len(Pic_List)-1:
-            print('No next')
+            #print('No next')
             Score[Index] = self.var.get()
             self.var.set(2.5)
             print(Score)
@@ -101,7 +120,7 @@ class App:
         global img_tk
 
         if Index == 0:
-            print('No previous')
+            #print('No previous')
             tkinter.messagebox.showwarning(message='No previous') 
         
         else:
@@ -124,17 +143,22 @@ class App:
         global Name
         global Save_path
 
-        with open(os.path.join(Save_path,Name+'.json'),'w') as f:
-            json.dump(Score, f)
+        if Index == 0:
+            tkinter.messagebox.showwarning(message='No score record!') 
+        
+        else:
 
-        df = pd.DataFrame(columns=['Index','Image','Score'])
+            with open(os.path.join(Save_path,Name+'.json'),'w') as f:
+                json.dump(Score, f)
 
-        for i in range(Index + 1):
-            df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[i]]
-        df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
+            df = pd.DataFrame(columns=['Index','Image','Score'])
 
-        tkinter.messagebox.showinfo(message='Thanks! '+Name) 
-        self.frame.quit()
+            for i in range(Index + 1):
+                df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[i]]
+            df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
+
+            tkinter.messagebox.showinfo(message='Thanks! '+Name) 
+            self.frame.quit()
 
 
 
@@ -156,6 +180,7 @@ class Start:
         entry.place(x = 0.5*w_win, y = 0.5*h_win,anchor='center',width=300,height=40)
         button = Button(frame,text='Enter',command=self.save_name)
         button.place(x = 0.5*w_win, y = 0.55*h_win,anchor='center')
+        entry.bind("<Return>",self.save_name_key)
     def save_name(self):
         global Name
         global Index
@@ -179,6 +204,8 @@ class Start:
             # print(self.name.get())
             self.frame.destroy()
             Introduction(self.window,self.w_win,self.h_win)
+    def save_name_key(self,event):
+        self.save_name()
 
 class Introduction:
     def __init__(self,window,w_win,h_win) -> None:
@@ -204,18 +231,24 @@ class Introduction:
 
         button = Button(frame,text='Start',command=self.start)
         button.place(x = 0.95*w_win, y = 0.5*h_win,anchor='center')
+
+        # button.bind("<Return>",self.start_key)
     def start(self):
         self.frame.destroy()
         App(self.window,self.w_win,self.h_win)
+    # def start_key(self,event):
+    #     self.start()
 
 window = Tk()
-w_win = window.winfo_screenwidth()//2
+w_win = window.winfo_screenwidth()
 h_win = window.winfo_screenheight()
 size_str = str(w_win) + 'x' + str(h_win)
 # print(size_str)
 window.geometry(size_str)
 
 # global name
+# Image_path = 'http://0.0.0.0:80/pic'
+# #python -m http.server 80
 Image_path = 'pic'
 Name = ''
 Score = dict()
@@ -224,11 +257,14 @@ Save_path = 'score_data'
 if not os.path.exists(Save_path):
     os.makedirs(Save_path)
 
-Pic_List = os.listdir(Image_path)
-Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
+# Pic_List = os.listdir(Image_path)
+# Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
+df = pd.read_csv('Images.csv')
+Pic_List = np.array(df['Image'])
 # print(Pic_List)
 if len(Pic_List) == 0:
     print('No pics')
+    raise Exception('No pics')
 
 Index = 0
 
