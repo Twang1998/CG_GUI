@@ -15,8 +15,8 @@ def arg():
     parser = argparse.ArgumentParser()
 
     # input parameters
-    parser.add_argument('--img_path', type=str)
-    parser.add_argument('--csv_file', type=str)
+    parser.add_argument('--img_path', type=str,default='pic')
+    parser.add_argument('--csv_file', type=str,default='Images.csv')
     parser.add_argument('--mode', type=str,default='local',choices=['local','internet'])
 
     config = parser.parse_args()

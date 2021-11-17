@@ -1,1 +1,4 @@
 score_data/
+build/
+dist/
+.dist/
