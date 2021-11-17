@@ -17,6 +17,7 @@ def arg():
     # input parameters
     parser.add_argument('--img_path', type=str)
     parser.add_argument('--csv_file', type=str)
+    parser.add_argument('--mode', type=str,default='local',choices=['local','internet'])
 
     config = parser.parse_args()
 
@@ -113,6 +114,7 @@ class App:
         global img
         global img_tk
         global Index
+        global Mode
 
         self.window = window
         self.w_win = w_win
@@ -128,9 +130,10 @@ class App:
         canvas = Canvas(frame,width=self.w_canvas,height=self.h_canvas)
         self.canvas = canvas
         canvas.place(x = 0, y = 0.5*h_win,anchor='w')
-
-        img = Image.open(Pic_List[Index]).convert('RGB')
-        # img = Image.open(BytesIO(requests.get('http://0.0.0.0:80/pic/Venice_3840x2160_60fps_10bit_420_1920x1080_BC.png').content)).convert('RGB')
+        if Mode == 'local':
+            img = Image.open(Pic_List[Index]).convert('RGB')
+        elif Mode == 'internet':
+            img = Image.open(BytesIO(requests.get(Pic_List[Index]).content)).convert('RGB')
         # img.show()
         img_tk = ImageTk.PhotoImage(img)
         self.pre_imag = canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
@@ -219,7 +222,12 @@ class App:
 
             self.canvas.delete(self.pre_imag)
 
-            img = Image.open(Pic_List[Index]).convert('RGB')
+            if Mode == 'local':
+                img = Image.open(Pic_List[Index]).convert('RGB')
+            elif Mode == 'internet':
+                img = Image.open(BytesIO(requests.get(Pic_List[Index]).content)).convert('RGB')
+
+            # img = Image.open(Pic_List[Index]).convert('RGB')
             # img.show()
             img_tk = ImageTk.PhotoImage(img)
             self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
@@ -248,7 +256,11 @@ class App:
 
             self.canvas.delete(self.pre_imag)
 
-            img = Image.open(Pic_List[Index]).convert('RGB')
+            # img = Image.open(Pic_List[Index]).convert('RGB')
+            if Mode == 'local':
+                img = Image.open(Pic_List[Index]).convert('RGB')
+            elif Mode == 'internet':
+                img = Image.open(BytesIO(requests.get(Pic_List[Index]).content)).convert('RGB')
             # img.show()
             img_tk = ImageTk.PhotoImage(img)
             self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
@@ -296,12 +308,12 @@ if __name__ == '__main__':
     size_str = str(w_win) + 'x' + str(h_win)
     # print(size_str)
     window.geometry(size_str)
-
+    Mode = config.mode
     # global name
     # Image_path = 'http://0.0.0.0:80/pic'
     # #python -m http.server 80
     Image_path = config.img_path
-    if not os.path.exists(Image_path):
+    if config.mode == 'local' and not os.path.exists(Image_path):
         raise Exception('img_path does not exist!')
     Name = ''
     Score = dict()
@@ -322,7 +334,7 @@ if __name__ == '__main__':
     if len(Pic_List) == 0:
         print('No pics')
         raise Exception('No pics')
-    if not os.path.exists(Pic_List[0]):
+    if config.mode == 'local' and not os.path.exists(Pic_List[0]):
         raise Exception('{} does not exist!'.format(Pic_List[0]))
 
     Index = 0
