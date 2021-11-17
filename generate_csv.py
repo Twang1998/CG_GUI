@@ -1,13 +1,27 @@
 import numpy as np
 import pandas as pd
 import os
+import argparse
 
-df = pd.DataFrame()
+def arg():
+    parser = argparse.ArgumentParser()
 
-Image_path = 'pic'
-Pic_List = os.listdir(Image_path)
-# Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
+    # input parameters
+    parser.add_argument('--img_path', type=str)
+    parser.add_argument('--csv_file', type=str)
 
-df['Image'] = Pic_List
+    config = parser.parse_args()
 
-df.to_csv('Images.csv',index=False)
+    return config
+
+if __name__ == '__main__':
+    config = arg()
+    df = pd.DataFrame()
+
+    Image_path = config.img_path
+    Pic_List = os.listdir(Image_path)
+    # Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
+
+    df['Image'] = Pic_List
+
+    df.to_csv(config.csv_file,index=False)

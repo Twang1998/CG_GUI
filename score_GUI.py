@@ -9,8 +9,18 @@ import json
 import tkinter.messagebox 
 import requests
 from io import BytesIO
+import argparse
 
-from generate_csv import Pic_List
+def arg():
+    parser = argparse.ArgumentParser()
+
+    # input parameters
+    parser.add_argument('--img_path', type=str)
+    parser.add_argument('--csv_file', type=str)
+
+    config = parser.parse_args()
+
+    return config
  
 
 class Start:
@@ -143,6 +153,11 @@ class App:
         window.bind("<Button-5>",self.wheel_down)
         var.set(2.5)
 
+        self.label_scale_text = StringVar()
+        label_scale = Label(frame,textvariable=self.label_scale_text,font=('Times New Roman', 18))
+        label_scale.place(x=0.95*w_win, y=0.75*h_win, anchor='center')
+        self.label_scale_text.set(round(var.get(),1))
+
         next_button = Button(frame,text='Next',command=self.next)
         next_button.place(x=0.95*w_win, y=0.8*h_win, anchor='center')
 
@@ -165,15 +180,19 @@ class App:
         # print(event.delta)
         if event.delta > 0:
             self.var.set(self.var.get()+0.1)
+            self.label_scale_text.set(round(self.var.get(),1))
         else:
             self.var.set(self.var.get()-0.1)
+            self.label_scale_text.set(round(self.var.get(),1))
     def wheel_up(self,event):
         # print('haha')
         self.var.set(self.var.get()+0.1)
+        self.label_scale_text.set(round(self.var.get(),1))
 
     def wheel_down(self,event):
 
         self.var.set(self.var.get()-0.1)
+        self.label_scale_text.set(round(self.var.get(),1))
 
     def next(self):
         global Pic_List
@@ -186,12 +205,14 @@ class App:
             #print('No next')
             Score[str(Index)] = round(self.var.get(),1)
             self.var.set(2.5)
+            self.label_scale_text.set(round(self.var.get(),1))
             print(Score)
             tkinter.messagebox.showwarning(message="No next, Please click the 'save' button to end the scoring.") 
         else:
             # self.frame.destroy()
             Score[str(Index)] = round(self.var.get(),1)
             self.var.set(2.5)
+            self.label_scale_text.set(round(self.var.get(),1))
 
             Index += 1
             self.label_text.set("Index: {}".format(Index))
@@ -222,6 +243,8 @@ class App:
 
             Index -= 1
             self.label_text.set("Index: {}".format(Index))
+            self.var.set(Score[str(Index)])
+            self.label_scale_text.set(round(self.var.get(),1))
 
             self.canvas.delete(self.pre_imag)
 
@@ -264,9 +287,11 @@ class App:
 
 if __name__ == '__main__':
 
+    config = arg()
+
     window = Tk()
     window.title('Subjective Quality Assessment for Computer Generated Images')
-    w_win = window.winfo_screenwidth()//2
+    w_win = window.winfo_screenwidth()
     h_win = window.winfo_screenheight()
     size_str = str(w_win) + 'x' + str(h_win)
     # print(size_str)
@@ -275,7 +300,9 @@ if __name__ == '__main__':
     # global name
     # Image_path = 'http://0.0.0.0:80/pic'
     # #python -m http.server 80
-    Image_path = 'pic'
+    Image_path = config.img_path
+    if not os.path.exists(Image_path):
+        raise Exception('img_path does not exist!')
     Name = ''
     Score = dict()
     Save_path = 'score_data'
@@ -285,13 +312,18 @@ if __name__ == '__main__':
 
     # Pic_List = os.listdir(Image_path)
     # Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
-    df = pd.read_csv('Images.csv')
+    if not os.path.exists(config.csv_file):
+        raise Exception('csv_file does not exist!')
+    df = pd.read_csv(config.csv_file)
     Pic_List_tmp = np.array(df['Image'])
     Pic_List = [os.path.join(Image_path,i) for i in Pic_List_tmp]
+
     # print(Pic_List)
     if len(Pic_List) == 0:
         print('No pics')
         raise Exception('No pics')
+    if not os.path.exists(Pic_List[0]):
+        raise Exception('{} does not exist!'.format(Pic_List[0]))
 
     Index = 0
 
