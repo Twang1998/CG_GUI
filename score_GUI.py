@@ -129,7 +129,7 @@ class App:
 
         # Index += 1
         self.label_text = StringVar()
-        label = Label(textvariable=self.label_text,font=('Times New Roman', 18))
+        label = Label(frame,textvariable=self.label_text,font=('Times New Roman', 18))
         label.place(x=0.95*w_win, y=0.1*h_win, anchor='center')
         self.label_text.set("Index: {}".format(Index))
 
@@ -189,7 +189,7 @@ class App:
             print(Score)
             tkinter.messagebox.showwarning(message="No next, Please click the 'save' button to end the scoring.") 
         else:
-
+            # self.frame.destroy()
             Score[Index] = round(self.var.get(),1)
             self.var.set(2.5)
 
