@@ -154,6 +154,8 @@ class App:
 
         frame.bind("<Left>",self.previous_key)
         frame.bind("<Right>",self.next_key)
+        frame.bind("<Button-1>",self.previous_key)
+        frame.bind("<Button-3>",self.next_key)
         frame.bind("<Up>",self.wheel_up)
         frame.bind("<Down>",self.wheel_down)
 
@@ -279,7 +281,8 @@ if __name__ == '__main__':
     # Pic_List = os.listdir(Image_path)
     # Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
     df = pd.read_csv('Images.csv')
-    Pic_List = np.array(df['Image'])
+    Pic_List_tmp = np.array(df['Image'])
+    Pic_List = [os.path.join(Image_path,i) for i in Pic_List_tmp]
     # print(Pic_List)
     if len(Pic_List) == 0:
         print('No pics')

@@ -6,7 +6,7 @@ df = pd.DataFrame()
 
 Image_path = 'pic'
 Pic_List = os.listdir(Image_path)
-Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
+# Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
 
 df['Image'] = Pic_List
 
