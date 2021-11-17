@@ -12,155 +12,6 @@ from io import BytesIO
 
 from generate_csv import Pic_List
  
-class App:
-    def __init__(self,window,w_win,h_win):
-        global Pic_List
-        global Index
-        global img
-        global img_tk
-        global Index
-
-        self.window = window
-        self.w_win = w_win
-        self.h_win = h_win
-        self.w_canvas = 0.9*w_win
-        self.h_canvas = h_win
-
-        frame = Frame(window,width=w_win,height=h_win)
-        self.frame = frame
-        frame.pack()
-
-        canvas = Canvas(frame,width=self.w_canvas,height=self.h_canvas)
-        self.canvas = canvas
-        canvas.place(x = 0, y = 0.5*h_win,anchor='w')
-
-        img = Image.open(Pic_List[Index]).convert('RGB')
-        # img = Image.open(BytesIO(requests.get('http://0.0.0.0:80/pic/Venice_3840x2160_60fps_10bit_420_1920x1080_BC.png').content)).convert('RGB')
-        # img.show()
-        img_tk = ImageTk.PhotoImage(img)
-        self.pre_imag = canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
-        
-        # canvas.update()
-
-        # Index += 1
-        self.label_text = StringVar()
-        label = Label(textvariable=self.label_text)
-        label.place(x=0.95*w_win, y=0.1*h_win, anchor='center')
-        self.label_text.set(Index)
-
-        var = DoubleVar() 
-        self.var = var
-
-        mark = Scale(frame,from_=0,  to=5,  resolution=0.1, orient=VERTICAL , variable=var ,length = int(h_win*0.4),showvalue=0,tickinterval=0.5)
-        mark.place(x=0.95*w_win, y=0.5*h_win, anchor='center')
-        mark.bind("<MouseWheel>", self.wheel)
-        mark.bind("<Button-4>",self.wheel_down)
-        mark.bind("<Button-5>",self.wheel_up)
-        var.set(2.5)
-
-        next_button = Button(frame,text='Next',command=self.next)
-        next_button.place(x=0.95*w_win, y=0.8*h_win, anchor='center')
-
-        pre_button = Button(frame,text='Previous',command=self.previous)
-        pre_button.place(x=0.95*w_win, y=0.2*h_win, anchor='center')
-
-        save_button = Button(frame,text='Save',command=self.save)
-        save_button.place(x=0.95*w_win, y=0.9*h_win, anchor='center')
-    def wheel(self,event):
-        # print('haha')
-        # print(event.delta)
-        if event.delta > 0:
-            self.var.set(self.var.get()+0.1)
-        else:
-            self.var.set(self.var.get()-0.1)
-    def wheel_up(self,event):
-        # print('haha')
-        self.var.set(self.var.get()+0.1)
-
-    def wheel_down(self,event):
-
-        self.var.set(self.var.get()-0.1)
-
-    def next(self):
-        global Pic_List
-        global Index
-        global Score
-        global img
-        global img_tk
-
-        if Index == len(Pic_List)-1:
-            #print('No next')
-            Score[Index] = self.var.get()
-            self.var.set(2.5)
-            print(Score)
-            tkinter.messagebox.showwarning(message='No next') 
-        else:
-
-            Score[Index] = self.var.get()
-            self.var.set(2.5)
-
-            Index += 1
-            self.label_text.set(Index)
-
-            self.canvas.delete(self.pre_imag)
-
-            img = Image.open(Pic_List[Index]).convert('RGB')
-            # img.show()
-            img_tk = ImageTk.PhotoImage(img)
-            self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
-            # print(Name)
-            print(Score)
-        
-
-    def previous(self):
-        global Pic_List
-        global Index
-        global Score
-        global img
-        global img_tk
-
-        if Index == 0:
-            #print('No previous')
-            tkinter.messagebox.showwarning(message='No previous') 
-        
-        else:
-
-            Index -= 1
-            self.label_text.set(Index)
-
-            self.canvas.delete(self.pre_imag)
-
-            img = Image.open(Pic_List[Index]).convert('RGB')
-            # img.show()
-            img_tk = ImageTk.PhotoImage(img)
-            self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
-            # print(Name)
-    
-    def save(self):
-        global Score
-        global Pic_List
-        global Index
-        global Name
-        global Save_path
-
-        if Index == 0:
-            tkinter.messagebox.showwarning(message='No score record!') 
-        
-        else:
-
-            with open(os.path.join(Save_path,Name+'.json'),'w') as f:
-                json.dump(Score, f)
-
-            df = pd.DataFrame(columns=['Index','Image','Score'])
-
-            for i in range(Index + 1):
-                df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[i]]
-            df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
-
-            tkinter.messagebox.showinfo(message='Thanks! '+Name) 
-            self.frame.quit()
-
-
 
 class Start:
     def __init__(self,window,w_win,h_win) -> None:
@@ -193,17 +44,22 @@ class Start:
             Name = self.name.get()
             if os.path.exists(os.path.join(Save_path,Name+'.json')):
                 with open(os.path.join(Save_path,Name+'.json'),'r') as f:
-                    Score = json.load(f)
-                keys = list(Score.keys())
-                Index = int(keys[-1])+1
-                if Index >= len(Pic_List):
+                    score = json.load(f)
+                keys = list(score.keys())
+                index = int(keys[-1])+1
+                if index >= len(Pic_List):
                     tkinter.messagebox.showwarning(message='Sorry, you have finished scoring!') 
-                    self.frame.quit()
-                print(Index)
-
-            # print(self.name.get())
-            self.frame.destroy()
-            Introduction(self.window,self.w_win,self.h_win)
+                    # self.frame.quit()
+                # print(Index)
+                else:
+                    Index = index
+                    Score = score
+                    self.frame.destroy()
+                    Introduction(self.window,self.w_win,self.h_win)
+            else:
+                # print(self.name.get())
+                self.frame.destroy()
+                Introduction(self.window,self.w_win,self.h_win)
     def save_name_key(self,event):
         self.save_name()
 
@@ -215,6 +71,7 @@ class Introduction:
         self.w_win = w_win
         self.h_win = h_win
         frame = Frame(window,width=w_win,height=h_win)
+        frame.focus_set()
         self.frame = frame
         frame.pack()
         # frame.update()
@@ -232,46 +89,208 @@ class Introduction:
         button = Button(frame,text='Start',command=self.start)
         button.place(x = 0.95*w_win, y = 0.5*h_win,anchor='center')
 
-        # button.bind("<Return>",self.start_key)
+        frame.bind("<Return>",self.start_key)
     def start(self):
         self.frame.destroy()
         App(self.window,self.w_win,self.h_win)
-    # def start_key(self,event):
-    #     self.start()
+    def start_key(self,event):
+        self.start()
 
-window = Tk()
-w_win = window.winfo_screenwidth()
-h_win = window.winfo_screenheight()
-size_str = str(w_win) + 'x' + str(h_win)
-# print(size_str)
-window.geometry(size_str)
+class App:
+    def __init__(self,window,w_win,h_win):
+        global Pic_List
+        global Index
+        global img
+        global img_tk
+        global Index
 
-# global name
-# Image_path = 'http://0.0.0.0:80/pic'
-# #python -m http.server 80
-Image_path = 'pic'
-Name = ''
-Score = dict()
-Save_path = 'score_data'
+        self.window = window
+        self.w_win = w_win
+        self.h_win = h_win
+        self.w_canvas = 0.9*w_win
+        self.h_canvas = h_win
 
-if not os.path.exists(Save_path):
-    os.makedirs(Save_path)
+        frame = Frame(window,width=w_win,height=h_win)
+        self.frame = frame
+        frame.focus_set()
+        frame.pack()
 
-# Pic_List = os.listdir(Image_path)
-# Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
-df = pd.read_csv('Images.csv')
-Pic_List = np.array(df['Image'])
-# print(Pic_List)
-if len(Pic_List) == 0:
-    print('No pics')
-    raise Exception('No pics')
+        canvas = Canvas(frame,width=self.w_canvas,height=self.h_canvas)
+        self.canvas = canvas
+        canvas.place(x = 0, y = 0.5*h_win,anchor='w')
 
-Index = 0
+        img = Image.open(Pic_List[Index]).convert('RGB')
+        # img = Image.open(BytesIO(requests.get('http://0.0.0.0:80/pic/Venice_3840x2160_60fps_10bit_420_1920x1080_BC.png').content)).convert('RGB')
+        # img.show()
+        img_tk = ImageTk.PhotoImage(img)
+        self.pre_imag = canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
+        
+        # canvas.update()
 
-img = None
-img_tk = None
+        # Index += 1
+        self.label_text = StringVar()
+        label = Label(textvariable=self.label_text,font=('Times New Roman', 18))
+        label.place(x=0.95*w_win, y=0.1*h_win, anchor='center')
+        self.label_text.set("Index: {}".format(Index))
 
- 
-app = Start(window,w_win,h_win)
- 
-window.mainloop()
+        var = DoubleVar() 
+        self.var = var
+
+        mark = Scale(frame,from_=5,  to=0,  resolution=0.1, orient=VERTICAL , variable=var ,length = int(h_win*0.4),showvalue=0,tickinterval=0.5)
+        mark.place(x=0.95*w_win, y=0.5*h_win, anchor='center')
+        frame.bind("<MouseWheel>", self.wheel)
+        frame.bind("<Button-4>",self.wheel_up)
+        frame.bind("<Button-5>",self.wheel_down)
+        var.set(2.5)
+
+        next_button = Button(frame,text='Next',command=self.next)
+        next_button.place(x=0.95*w_win, y=0.8*h_win, anchor='center')
+
+        pre_button = Button(frame,text='Previous',command=self.previous)
+        pre_button.place(x=0.95*w_win, y=0.2*h_win, anchor='center')
+
+        save_button = Button(frame,text='Save',command=self.save)
+        save_button.place(x=0.95*w_win, y=0.9*h_win, anchor='center')
+
+        frame.bind("<Left>",self.previous_key)
+        frame.bind("<Right>",self.next_key)
+        frame.bind("<Up>",self.wheel_up)
+        frame.bind("<Down>",self.wheel_down)
+
+    def wheel(self,event):
+        # print('haha')
+        # print(event.delta)
+        if event.delta > 0:
+            self.var.set(self.var.get()+0.1)
+        else:
+            self.var.set(self.var.get()-0.1)
+    def wheel_up(self,event):
+        # print('haha')
+        self.var.set(self.var.get()+0.1)
+
+    def wheel_down(self,event):
+
+        self.var.set(self.var.get()-0.1)
+
+    def next(self):
+        global Pic_List
+        global Index
+        global Score
+        global img
+        global img_tk
+
+        if Index == len(Pic_List)-1:
+            #print('No next')
+            Score[Index] = round(self.var.get(),1)
+            self.var.set(2.5)
+            print(Score)
+            tkinter.messagebox.showwarning(message="No next, Please click the 'save' button to end the scoring.") 
+        else:
+
+            Score[Index] = round(self.var.get(),1)
+            self.var.set(2.5)
+
+            Index += 1
+            self.label_text.set("Index: {}".format(Index))
+
+            self.canvas.delete(self.pre_imag)
+
+            img = Image.open(Pic_List[Index]).convert('RGB')
+            # img.show()
+            img_tk = ImageTk.PhotoImage(img)
+            self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
+            # print(Name)
+            print(Score)
+    def next_key(self, event):
+        self.next()
+
+    def previous(self):
+        global Pic_List
+        global Index
+        global Score
+        global img
+        global img_tk
+
+        if Index == 0:
+            #print('No previous')
+            tkinter.messagebox.showwarning(message='No previous') 
+        
+        else:
+
+            Index -= 1
+            self.label_text.set("Index: {}".format(Index))
+
+            self.canvas.delete(self.pre_imag)
+
+            img = Image.open(Pic_List[Index]).convert('RGB')
+            # img.show()
+            img_tk = ImageTk.PhotoImage(img)
+            self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
+            # print(Name)
+    def previous_key(self, event):
+        self.previous()
+    
+    def save(self):
+        global Score
+        global Pic_List
+        global Index
+        global Name
+        global Save_path
+
+        if Index == 0:
+            tkinter.messagebox.showwarning(message='No score record!') 
+        
+        else:
+
+            with open(os.path.join(Save_path,Name+'.json'),'w') as f:
+                json.dump(Score, f)
+
+            df = pd.DataFrame(columns=['Index','Image','Score'])
+
+            for i in range(Index + 1):
+                df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[i]]
+            df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
+
+            tkinter.messagebox.showinfo(message='Thanks! '+Name) 
+            self.frame.quit()
+
+
+if __name__ == '__main__':
+
+    window = Tk()
+    window.title('Subjective Quality Assessment for Computer Generated Images')
+    w_win = window.winfo_screenwidth()//2
+    h_win = window.winfo_screenheight()
+    size_str = str(w_win) + 'x' + str(h_win)
+    # print(size_str)
+    window.geometry(size_str)
+
+    # global name
+    # Image_path = 'http://0.0.0.0:80/pic'
+    # #python -m http.server 80
+    Image_path = 'pic'
+    Name = ''
+    Score = dict()
+    Save_path = 'score_data'
+
+    if not os.path.exists(Save_path):
+        os.makedirs(Save_path)
+
+    # Pic_List = os.listdir(Image_path)
+    # Pic_List = [os.path.join(Image_path,i) for i in Pic_List]
+    df = pd.read_csv('Images.csv')
+    Pic_List = np.array(df['Image'])
+    # print(Pic_List)
+    if len(Pic_List) == 0:
+        print('No pics')
+        raise Exception('No pics')
+
+    Index = 0
+
+    img = None
+    img_tk = None
+
+    
+    app = Start(window,w_win,h_win)
+    
+    window.mainloop()
