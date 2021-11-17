@@ -138,9 +138,9 @@ class App:
 
         mark = Scale(frame,from_=5,  to=0,  resolution=0.1, orient=VERTICAL , variable=var ,length = int(h_win*0.4),showvalue=0,tickinterval=0.5)
         mark.place(x=0.95*w_win, y=0.5*h_win, anchor='center')
-        frame.bind("<MouseWheel>", self.wheel)
-        frame.bind("<Button-4>",self.wheel_up)
-        frame.bind("<Button-5>",self.wheel_down)
+        window.bind("<MouseWheel>", self.wheel)
+        window.bind("<Button-4>",self.wheel_up)
+        window.bind("<Button-5>",self.wheel_down)
         var.set(2.5)
 
         next_button = Button(frame,text='Next',command=self.next)
@@ -152,10 +152,11 @@ class App:
         save_button = Button(frame,text='Save',command=self.save)
         save_button.place(x=0.95*w_win, y=0.9*h_win, anchor='center')
 
+
         frame.bind("<Left>",self.previous_key)
         frame.bind("<Right>",self.next_key)
-        frame.bind("<Button-1>",self.previous_key)
-        frame.bind("<Button-3>",self.next_key)
+        # frame.bind("<Button-1>",self.previous_key)
+        window.bind("<Button-3>",self.next_key)
         frame.bind("<Up>",self.wheel_up)
         frame.bind("<Down>",self.wheel_down)
 
