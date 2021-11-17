@@ -184,13 +184,13 @@ class App:
 
         if Index == len(Pic_List)-1:
             #print('No next')
-            Score[Index] = round(self.var.get(),1)
+            Score[str(Index)] = round(self.var.get(),1)
             self.var.set(2.5)
             print(Score)
             tkinter.messagebox.showwarning(message="No next, Please click the 'save' button to end the scoring.") 
         else:
             # self.frame.destroy()
-            Score[Index] = round(self.var.get(),1)
+            Score[str(Index)] = round(self.var.get(),1)
             self.var.set(2.5)
 
             Index += 1
@@ -251,7 +251,11 @@ class App:
             df = pd.DataFrame(columns=['Index','Image','Score'])
 
             for i in range(Index + 1):
-                df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[i]]
+                try:
+                    # print(i)
+                    df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[str(i)]]
+                except:
+                    pass
             df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
 
             tkinter.messagebox.showinfo(message='Thanks! '+Name) 
