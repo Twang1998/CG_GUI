@@ -17,6 +17,18 @@ a = Analysis(['score_GUI.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
+
+# Avoid warning ##no use
+to_remove = ["_AES", "_ARC4", "_DES", "_DES3", "_SHA256", "_counter"]
+for b in a.binaries:
+    found = any(
+        f'{crypto}.cp37-win_amd64.pyd' in b[1]
+        for crypto in to_remove
+    )
+    if found:
+        print(f"Removing {b[1]}")
+        a.binaries.remove(b)
+
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 
