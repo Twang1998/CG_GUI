@@ -308,6 +308,7 @@ if __name__ == '__main__':
     size_str = str(w_win) + 'x' + str(h_win)
     # print(size_str)
     window.geometry(size_str)
+    window.attributes("-topmost",True)
     Mode = config.mode
     # global name
     # Image_path = 'http://0.0.0.0:80/pic'
@@ -315,6 +316,8 @@ if __name__ == '__main__':
     Image_path = config.img_path
     if config.mode == 'local' and not os.path.exists(Image_path):
         raise Exception('img_path does not exist!')
+    if config.mode == 'internet' and Image_path[:4] != 'http':
+        raise Exception('Please provide http address in Internet mode')
     Name = ''
     Score = dict()
     Save_path = 'score_data'
