@@ -209,7 +209,7 @@ class App:
             Score[str(Index)] = round(self.var.get(),1)
             self.var.set(2.5)
             self.label_scale_text.set(round(self.var.get(),1))
-            print(Score)
+            # print(Score)
             tkinter.messagebox.showwarning(message="No next, Please click the 'save' button to end the scoring.") 
         else:
             # self.frame.destroy()
@@ -232,7 +232,7 @@ class App:
             img_tk = ImageTk.PhotoImage(img)
             self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
             # print(Name)
-            print(Score)
+            # print(Score)
     def next_key(self, event):
         self.next()
 
@@ -288,7 +288,8 @@ class App:
             for i in range(Index + 1):
                 try:
                     # print(i)
-                    df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[str(i)]]
+                    # df.loc[i] = [i,Pic_List[i].split('/')[-1],Score[str(i)]]
+                    df.loc[i] = [i,os.path.split(Pic_List[i])[-1],Score[str(i)]]
                 except:
                     pass
             df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
