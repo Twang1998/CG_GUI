@@ -308,6 +308,7 @@ if __name__ == '__main__':
     h_win = window.winfo_screenheight()
     size_str = str(w_win) + 'x' + str(h_win)
     # print(size_str)
+    # add test point
     window.geometry(size_str)
     window.attributes("-topmost",True)
     Mode = config.mode
