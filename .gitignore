@@ -1,7 +1,6 @@
-score_data/
 build/
 dist/
 .dist/
 score_GUI
 *.spec
-test.py
+
