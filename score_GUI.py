@@ -295,7 +295,7 @@ class App:
             df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
 
             tkinter.messagebox.showinfo(message='Thanks! '+Name) 
-            self.frame.quit()
+            # self.frame.quit()
 
 
 if __name__ == '__main__':
