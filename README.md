@@ -8,4 +8,5 @@ python score_GUI.py --mode local --img_path 'path_to_img' --csv_file 'xxx.csv'
 ```
 python score_GUI.py --mode local --img_path C:\Users\37151\Desktop\CGQA\CG_QA --csv_file CG_QA_shuffle.csv
 python score_GUI.py --mode internet --img_path http://0.0.0.0/pic/ --csv_file CG_QA_shuffle.csv
+python score_GUI.py --mode internet --img_path http://150.158.85.3/CG_QA/CG_QA/ --csv_file CG_QA_shuffle.csv
 ```
