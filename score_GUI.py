@@ -134,6 +134,10 @@ class App:
             img = Image.open(Pic_List[Index]).convert('RGB')
         elif Mode == 'internet':
             img = Image.open(BytesIO(requests.get(Pic_List[Index]).content)).convert('RGB')
+        size = img.size
+        if max(size[0],size[1]) > 3000:
+            ratio = max(1080/size[0],1080/size[1])
+            img = img.resize((int(size[0]*ratio),int(size[1]*ratio)))
         # img.show()
         img_tk = ImageTk.PhotoImage(img)
         self.pre_imag = canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
@@ -226,6 +230,10 @@ class App:
                 img = Image.open(Pic_List[Index]).convert('RGB')
             elif Mode == 'internet':
                 img = Image.open(BytesIO(requests.get(Pic_List[Index]).content)).convert('RGB')
+            size = img.size
+            if max(size[0],size[1]) > 3000:
+                ratio = max(1080/size[0],1080/size[1])
+                img = img.resize((int(size[0]*ratio),int(size[1]*ratio)))
 
             # img = Image.open(Pic_List[Index]).convert('RGB')
             # img.show()
@@ -261,6 +269,10 @@ class App:
                 img = Image.open(Pic_List[Index]).convert('RGB')
             elif Mode == 'internet':
                 img = Image.open(BytesIO(requests.get(Pic_List[Index]).content)).convert('RGB')
+            size = img.size
+            if max(size[0],size[1]) > 3000:
+                ratio = max(1080/size[0],1080/size[1])
+                img = img.resize((int(size[0]*ratio),int(size[1]*ratio)))
             # img.show()
             img_tk = ImageTk.PhotoImage(img)
             self.pre_imag = self.canvas.create_image(self.w_canvas//2,self.h_canvas//2,anchor=CENTER,image = img_tk)
