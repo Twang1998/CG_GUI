@@ -329,7 +329,7 @@ class App:
         else:
 
             conn.commit()
-            conn.close()
+            
 
             with open(os.path.join(Save_path,Name+'.json'),'w') as f:
                 json.dump(Score, f)
@@ -345,8 +345,13 @@ class App:
                     pass
             df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
 
-            tkinter.messagebox.showinfo(message='Thanks! '+Name) 
-            # self.frame.quit()
+            # tkinter.messagebox.showinfo(message='Thanks! '+Name) 
+            status = tkinter.messagebox.askyesno(message='Thanks! '+Name+'\nContinue or not?')
+            if status == False:
+                conn.close()
+                self.frame.quit()
+            else:
+                pass
 
 
 if __name__ == '__main__':
