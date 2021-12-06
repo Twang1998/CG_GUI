@@ -5,8 +5,8 @@ import numpy as np
 df1 = pd.read_csv('wangtao.csv')
 df2 = pd.read_csv('zzc.csv')
 
-a = np.array(df1['Score'])[3000:4000]
-b = np.array(df2['Score'])[3000:4000]
+a = np.array(df1['Score'])[4000:5000]
+b = np.array(df2['Score'])[4000:5000]
 # a = (a+b)/2
 
 srcc = stats.spearmanr(a,b)[0]
