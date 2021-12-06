@@ -346,7 +346,7 @@ class App:
             df.to_csv(os.path.join(Save_path,Name+'.csv'),index=False)
 
             # tkinter.messagebox.showinfo(message='Thanks! '+Name) 
-            status = tkinter.messagebox.askyesno(message='Thanks! '+Name+'\nContinue or not?')
+            status = tkinter.messagebox.askyesno(message='Thanks! '+Name+'\nContinue?')
             if status == False:
                 conn.close()
                 self.frame.quit()
