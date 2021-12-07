@@ -3,10 +3,10 @@ import numpy as np
 import json
 import os
 
-with open(os.path.join('wangtao.json'),'r') as f:
+with open(os.path.join('zzc.json'),'r') as f:
     Score = json.load(f)
 
-rescore = pd.read_csv('re_score_wt.csv')
+rescore = pd.read_csv('re_score_zzc.csv')
 indexs = np.array(rescore['index'])
 scores = np.array(rescore['Score'])
 
@@ -28,4 +28,4 @@ for i in range(6000):
         df.loc[i] = [i,Pic_List[i],Score[str(i)]]
     except:
         pass
-df.to_csv(os.path.join('wangtao1.csv'),index=False)
+df.to_csv(os.path.join('zzc1.csv'),index=False)
