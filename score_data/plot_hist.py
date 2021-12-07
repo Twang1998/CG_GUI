@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 df1 = pd.read_csv('wangtao.csv')
 df2 = pd.read_csv('zzc.csv')
-a = np.array((df1['Score']+df2['Score'])/2)
+a = np.array((df1['Score']+df1['Score'])/2)
 
 plt.hist(a,bins=50,range=(-0.05,5.05))
 plt.xticks(np.arange(0,5,0.1))
