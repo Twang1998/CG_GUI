@@ -403,7 +403,7 @@ if __name__ == '__main__':
     img = None
     img_tk = None
 
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect(os.path.join(Save_path,'score.db'))
     print("Opened database successfully")
     
 
