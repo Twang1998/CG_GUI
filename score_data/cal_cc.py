@@ -2,8 +2,8 @@ from scipy import stats
 import pandas as pd
 import numpy as np
 
-df1 = pd.read_csv('zzc.csv')
-df2 = pd.read_csv('zzc2.csv')
+df1 = pd.read_csv('wangtao.csv')
+df2 = pd.read_csv('wangtao2.csv')
 
 a = np.array(df1['Score'])[0:3000]
 b = np.array(df2['Score'])[0:3000]
