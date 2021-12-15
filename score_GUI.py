@@ -40,6 +40,7 @@ class Start:
         self.name = name
         entry = Entry(frame,textvariable=name,font=('Times New Roman', 18))
         entry.place(x = 0.5*w_win, y = 0.5*h_win,anchor='center',width=300,height=40)
+        entry.focus_set()
         button = Button(frame,text='Enter',command=self.save_name)
         button.place(x = 0.5*w_win, y = 0.55*h_win,anchor='center')
         entry.bind("<Return>",self.save_name_key)
